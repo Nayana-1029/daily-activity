@@ -1,0 +1,51 @@
+name: 5 Times Daily Auto Commit
+
+permissions:
+  contents: write
+
+on:
+  schedule:
+    # Runs at 00:00, 05:00, 10:00, 15:00, and 20:00 UTC every day
+    - cron: "0 0,5,7,12,22,10,15,20 * * *"
+  workflow_dispatch:
+
+jobs:
+  auto_commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Update Timestamp
+        run: |
+          echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" > LAST_UPDATED
+
+      - name: Commit Changes
+        run: |
+          git config --global user.name "Chandan-1818"
+          git config --global user.email "chandan895121@gmail.com"
+
+          git add LAST_UPDATED
+
+          messages=(
+            "chore(bot): 🤖 auto commit"
+            "chore(bot): 🚀 scheduled update"
+            "chore(bot): ✨ periodic commit"
+            "chore(bot): 🔄 repository update"
+            "chore(bot): 📅 daily sync"
+            "chore(bot): 📝 update timestamp"
+            "chore(bot): ⚡ maintenance"
+            "chore(bot): 🌟 keep active"
+            "chore(bot): 🎯 automated update"
+            "chore(bot): ✅ routine commit"
+          )
+
+          random_index=$((RANDOM % ${#messages[@]}))
+          git commit -m "${messages[$random_index]}" || echo "No changes to commit"
+
+      - name: Push Changes
+        run: |
+          git push
